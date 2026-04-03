@@ -8,6 +8,10 @@ app.use(express.json());
 const PORT = 5000;
 
 // 🔹 Carbon Score API
+app.get("/", (req, res) => {
+  res.send("Kenzai backend is live 🚀");
+});
+
 app.post("/api/calculate", (req, res) => {
   const { transport, diet, elec, flight } = req.body;
 
@@ -31,10 +35,7 @@ app.post("/api/calculate", (req, res) => {
   });
 });
 
-// 🔹 Simulation API
-app.get("/", (req, res) => {
-  res.send("Kenzai backend is live 🚀");
-});
+
 app.post("/api/simulate", (req, res) => {
   const { transport, diet, elec, flight, toggles } = req.body;
 

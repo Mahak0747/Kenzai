@@ -49,7 +49,7 @@ export default function DashboardSection({ userData }) {
   const [data, setData] = useState({ score: 0, emissions: 0 });
 
 useEffect(() => {
-  fetch("http://localhost:5000/api/calculate", {
+  fetch("https://kenzai.onrender.com/api/calculate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -59,12 +59,7 @@ useEffect(() => {
     .then((res) => res.json())
     .then((res) => setData(res));
 }, [transport, diet, elec, flight]);
-  const emissions = (
-    transport * 0.05 +
-    diet * 0.3 +
-    elec * 0.01 +
-    flight * 0.5
-  ).toFixed(1);
+
   const ranking = data.emissions < 2 ? "Top 10%" :
                   data.emissions < 4 ? "Top 30%" :
                   data.emissions < 6 ? "Top 60%" : "Top 90%";

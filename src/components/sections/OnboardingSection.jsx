@@ -87,7 +87,7 @@ export default function OnboardingSection({ setUserData }) {
   const [score, setScore] = useState(0);
 
 useEffect(() => {
-  fetch("http://localhost:5000/api/calculate", {
+  fetch("https://kenzai.onrender.com/api/calculate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

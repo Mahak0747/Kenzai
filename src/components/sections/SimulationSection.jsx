@@ -76,7 +76,7 @@ export default function SimulationSection({ userData }) {
 });
 
 useEffect(() => {
-  fetch("http://localhost:5000/api/simulate", {
+  fetch("https://kenzai.onrender.com/api/simulate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
