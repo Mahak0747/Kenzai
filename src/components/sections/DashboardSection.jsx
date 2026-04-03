@@ -1,8 +1,8 @@
 import { Box, Chip, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
+import { useState, useEffect } from "react";
 import MetricCard from "../cards/MetricCard";
 import SectionShell from "./SectionShell";
-import { computeScore } from "./OnboardingSection";
 
 function BarRow({ icon, label, pct }) {
   return (
@@ -46,21 +46,28 @@ export default function DashboardSection({ userData }) {
     elec = 0,
     flight = 0,
   } = userData || {};
-  const score = computeScore({
-    transport,
-    diet,
-    elec,
-    flight,
-  });
+  const [data, setData] = useState({ score: 0, emissions: 0 });
+
+useEffect(() => {
+  fetch("http://localhost:5000/api/calculate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ transport, diet, elec, flight }),
+  })
+    .then((res) => res.json())
+    .then((res) => setData(res));
+}, [transport, diet, elec, flight]);
   const emissions = (
     transport * 0.05 +
     diet * 0.3 +
     elec * 0.01 +
     flight * 0.5
   ).toFixed(1);
-  const ranking = emissions < 2 ? "Top 10%" :
-                  emissions < 4 ? "Top 30%" :
-                  emissions < 6 ? "Top 60%" : "Top 90%";
+  const ranking = data.emissions < 2 ? "Top 10%" :
+                  data.emissions < 4 ? "Top 30%" :
+                  data.emissions < 6 ? "Top 60%" : "Top 90%";
   const total = transport + diet + elec + flight;
 
   const breakdown =
@@ -95,17 +102,17 @@ export default function DashboardSection({ userData }) {
         }}
       >
         <Box sx={{flex:1}}>
-          <MetricCard label="TOTAL CARBON SCORE" value={score} subtext="out of 100 🌿 (lower = better)" />
+          <MetricCard label="TOTAL CARBON SCORE" value={data.score} subtext="out of 100 🌿 (lower = better)" />
         </Box>
         <Box sx={{flex:1}}>
-          <MetricCard label="ANNUAL CO₂ EMISSIONS" value={emissions} subtext="tonnes/year (India avg: 1.9t)" />
+          <MetricCard label="ANNUAL CO₂ EMISSIONS" value={data.emissions} subtext="tonnes/year (India avg: 1.9t)" />
         </Box>
         <Box sx={{flex:1}}>
           <MetricCard label="GLOBAL RANKING" value={ranking} subtext="of Kenzai users 🏆" />
         </Box>
       </Box>
 
-        <Box item xs={12}>
+        <Box>
           <MetricCard label="BREAKDOWN BY CATEGORY" sx={{ height: "100%" }}>
             <Stack spacing={1.5} sx={{ mt: 2 }}>
               <BarRow icon="🚗" label="Transport" pct={breakdown.transport} />

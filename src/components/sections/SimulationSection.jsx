@@ -1,9 +1,7 @@
-import { Box, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Box, Paper, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { useMemo, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import SectionShell from "./SectionShell";
-
-const savings = { 1: 0.8, 2: 0.6, 3: 0.5, 4: 0.4 };
 
 const togglesList = [
   { id: 1, icon: "🚲", label: "SWITCH TO CYCLING / METRO" },
@@ -55,7 +53,7 @@ function SimToggle({ active, icon, label, onClick }) {
           flexShrink: 0,
         })}
       >
-        {active ? "✓" : ""}
+        {active ? " ✓" : ""}
       </Box>
     </Paper>
   );
@@ -68,30 +66,39 @@ export default function SimulationSection({ userData }) {
     elec = 0,
     flight = 0,
   } = userData || {};
-  const base = useMemo(() => {
-    return (
-      transport * 0.05 +
-      diet * 0.3 +
-      elec * 0.01 +
-      flight * 0.5
-    );
-  }, [transport, diet, elec, flight]);
-
+  
   const [toggles, setToggles] = useState({ 1: true, 2: false, 3: false, 4: false });
 
-  const totalSave = useMemo(
-    () => Object.keys(toggles).reduce((sum, k) => (toggles[k] ? sum + savings[k] : sum), 0),
-    [toggles],
-  );
-  const future = useMemo(
-    () => Math.max(1.2, base - totalSave),
-    [base, totalSave]
-  );
-  const trees = useMemo(() => Math.round(totalSave * 46), [totalSave]);
+  const [simData, setSimData] = useState({
+  base: 0,
+  future: 0,
+  saved: 0,
+});
+
+useEffect(() => {
+  fetch("http://localhost:5000/api/simulate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      transport,
+      diet,
+      elec,
+      flight,
+      toggles,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => setSimData(data));
+}, [transport, diet, elec, flight, toggles]);
+
+  const trees = useMemo(() => Math.round(simData.saved * 46), [simData.saved]);
+
   const pct = useMemo(() => {
-    if (base === 0) return 0;
-    return Math.round((totalSave / base) * 100);
-  }, [totalSave, base]);
+    if (simData.base === 0) return 0;
+    return Math.round((simData.saved / simData.base) * 100);
+  }, [simData]);
 
   return (
     <SectionShell
@@ -147,7 +154,7 @@ export default function SimulationSection({ userData }) {
                     mb: 1,
                   }}
                 >
-                  {base.toFixed(1)}t
+                  {simData.base}t
                 </Typography>
                 <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 3 }}>
                   CO₂ per year — your current path
@@ -192,7 +199,7 @@ export default function SimulationSection({ userData }) {
                     mb: 1,
                   })}
                 >
-                  {future.toFixed(1)}t
+                  {simData.future}t
                 </Typography>
                 <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 3 }}>
                   CO₂ if you make these changes
@@ -225,7 +232,7 @@ export default function SimulationSection({ userData }) {
               <Box sx={{ fontSize: 22 }}>🌳</Box>
               <Box>
                 <Typography variant="h5" sx={{ fontWeight: 900, color: "primary.main" }}>
-                  -{totalSave.toFixed(1)}t CO₂/year
+                  -{simData.saved}t CO₂/year
                 </Typography>
                 <Typography variant="caption" sx={{ color: "text.secondary" }}>
                   Equivalent to planting {trees} trees • You reduced {pct}% 🌱

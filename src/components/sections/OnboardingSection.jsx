@@ -15,14 +15,6 @@ function clamp(n, min, max) {
   return Math.min(max, Math.max(min, n));
 }
 
-export function computeScore({ transport, diet, elec, flight }) {
-  const t = transport;
-  const d = diet;
-  const e = elec;
-  const f = flight;
-  return Math.round(20 + (t / 100) * 30 + (d / 7) * 20 + ((e - 50) / 750) * 20 + (f / 20) * 10);
-}
-
 function scoreMeta(score) {
   if (score < 40) return { emoji: "🌿", desc: "// Eco Champion — amazing!" };
   if (score < 60) return { emoji: "🌍", desc: "// Eco Intermediate — room to grow" };
@@ -92,7 +84,22 @@ export default function OnboardingSection({ setUserData }) {
     setUserData((prev) => ({ ...prev, ...values }));
   }, [values, setUserData]);
 
-  const score = useMemo(() => computeScore(values), [values]);
+  const [score, setScore] = useState(0);
+
+useEffect(() => {
+  fetch("http://localhost:5000/api/calculate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(values),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      setScore(data.score);
+    });
+}, [values]);
+
   const meta = useMemo(() => scoreMeta(score), [score]);
 
   const progress = useMemo(() => {
