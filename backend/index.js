@@ -33,7 +33,7 @@ app.post("/api/calculate", (req, res) => {
 
 // 🔹 Simulation API
 app.get("/", (req, res) => {
-  res.send("Backend is working");
+  res.send("Kenzai backend is live 🚀");
 });
 app.post("/api/simulate", (req, res) => {
   const { transport, diet, elec, flight, toggles } = req.body;
