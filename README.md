@@ -101,4 +101,30 @@ Kenzai follows a modular architecture:
 - Global Scalability
 
 ---
+## ⚠️ Risk Mitigation
 
+- Rule-based core system for reliability  
+- AI used only for insights, not calculations  
+- Secure data handling and minimal storage  
+- Scalable modular architecture  
+
+---
+
+## 📚 References
+
+- IPCC Climate Data — https://www.ipcc.ch/data/  
+- Our World in Data — https://ourworldindata.org/co2-and-greenhouse-gas-emissions  
+  
+---
+
+## 👥 Team
+
+- Mahak Goswami
+- Mehak Shokeen 
+- Megha
+
+---
+
+## 🏁 Conclusion
+
+Kenzai bridges the gap between awareness and action by making sustainability interactive, personalized, and engaging.
