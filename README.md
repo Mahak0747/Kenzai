@@ -42,9 +42,6 @@ Kenzai creates a **digital carbon profile (Carbon Twin)** of the user and provid
 - 🎮 **Gamification**  
   Earn points, badges, and track progress  
 
-- 🤖 **AI Assistant**  
-  Get personalized suggestions for reducing emissions  
-
 - 👤 **Carbon Twin**  
   A digital reflection of your environmental impact  
 
